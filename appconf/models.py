@@ -40,6 +40,17 @@ class Product(models.Model):
         return self.name
 
 
+class Product_Detail(models.Model):
+    app_name = models.CharField(max_length=100, db_index=True, null=False, blank=False)
+    ip_address = models.GenericIPAddressField(protocol='both', db_index=True, null=False, blank=False)
+    app_port = models.IntegerField(null=True, blank=True, default=80)
+    env = models.CharField(max_length=50, null=True, blank=True)
+    deploy_method = models.CharField(max_length=50, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Project(models.Model):
     LANGUAGE_TYPES = (
         ("Java", "Java"),
@@ -121,7 +132,3 @@ class Project(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-
-

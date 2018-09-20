@@ -1,0 +1,33 @@
+<header class="main-header">
+
+    <!-- Logo -->
+    <a href="{% url 'index' %}" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>AST</b></span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>AdminSet</b></span>
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+        <div class="collapse navbar-collapse pull-left" id="navbar-collapse">
+          <ul class="nav navbar-nav">
+                <li style="font-size: medium" id="cloud"><a href="{% url 'app_by_mfrs' %}?mfrs=cloud"><b>公有云</b></a></li>
+                <li class="divider"></li>
+                <li style="font-size: medium" id="fd"><a href="{% url 'app_by_mfrs' %}?mfrs=fd"><b>福特-FD</b></a></li>
+                <li class="divider"></li>
+                <li style="font-size: medium" id="psa"><a href="{% url 'app_by_mfrs' %}?mfrs=psa"><b>神龙-PSA</b></a></li>
+                <li class="divider"></li>
+                <li style="font-size: medium" id="wl"><a href="{% url 'app_by_mfrs' %}?mfrs=wl"><b>上汽-五菱</b></a></li>
+                <li class="divider"></li>
+                <li style="font-size: medium" id="gz"><a href="{% url 'app_by_mfrs' %}?mfrs=gz"><b>观致</b></a></li>
+          </ul>
+        </div>
+      <!-- Navbar Right Menu -->
+      {% include 'navbar-custom-menu.html' %}
+    </nav>
+  </header>

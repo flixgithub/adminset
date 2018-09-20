@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load mytags %}
+{% block self_head_css_js %}
+    <script src="/static/layer/layer.js"></script>
+    <script src="/static/js/base.js"></script>
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="/static/plugins/datatables/dataTables.bootstrap.css"></script>
+    <script src="/static/bootstrap/css/bootstrap.css"></script>
+    <script src="/static/bootstrap/css/bootstrap.min.css"></script>
+{% endblock %}
+{% block content %}
+
+    <script>
+        window.onload=init;
+        function init() {
+            var box = document.getElementById("appconf");
+            box.className="active";
+            var box = document.getElementById("product_list");
+            box.className="active";
+        }
+    </script>
+
+
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <form action="" method="post" id="product_form">
+                {% csrf_token %}
+            <div class="box">
+                <div class="box-header">
+                    <!--<div class="col-sm-2" style="padding-left: 0; margin:10px  5px 15px; display:inline">-->
+                        <!--<a href="{% url 'product_add' %}"><li class="btn btn-success" ><b>添加产品线</b></li></a>-->
+                    <!--</div>-->
+                    <!--<div class="col-sm-2" style=" margin:10px  5px 15px; display:inline">>-->
+                        <!--<a href="{% url 'product_sync' %}"><li class="btn btn-success" ><b>同步产品线</b></li></a>-->
+                    <!--</div>-->
+                  <div class="" style="margin-right:15px; display:inline">
+                        <a href="{% url 'product_detail_add' %}?app_name={{ app_name }}"><li class="btn btn-success" ><b>添加产品线信息</b></li></a>
+                  </div>
+
+                  {% if messages %}
+                    <div class="container col-lg-12 " >
+                    <div class="alert alert-warning alert-dismissible" id="success-alert" role="alert">
+                       <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                  </div>
+                 </div>
+                  {% endif %}
+                </div>
+
+
+                <!-- /.box-header -->
+                <div class="box-body">
+                  <table class="table table-striped table-bordered" id="productform">
+                      <thead>
+                        <tr>
+                            <th>
+                                <input id="checkall" type="checkbox" class="i-checks" name="checkall" value="checkall" data-editable='false' onclick="check_all('product_form')">
+                            </th>
+                            <th>产品线名称</th>
+                            <th>IP</th>
+                            <th>端口</th>
+                            <th>环境名称</th>
+                            <th>部署方式</th>
+                        </tr>
+                      </thead>
+                            <tbody>
+                            {% for product in product_detail %}
+                                <tr class="even gradeX">
+                                    <td><input type="checkbox" id="id" class="i-checks" value="{{ product.id }}" name="id" /></td>
+                                    <!-- <td><a href="#"><li style="list-style-type:none" onclick="return popWin(this.value)" value="{{ product.0 }}">{{ product.0 }}</li></a> </td> -->
+                                    <td><a href="#"><li style="list-style-type:none" onclick="return popWin('{{ product.app_name }}')" value="{{ product.app_name }}">{{ product.app_name }}</li></a> </td>
+                                    <td>{{ product.ip_address }} </td>
+                                    <td>{{ product.app_port }} </td>
+                                    <td>{{ product.env }} </td>
+                                    <td>{{ product.deploy_method }}</td>
+                                    <!--
+                                    <td>
+                                        <a href="{% url "product_edit" product.id %}"><span class="btn btn-sm btn-info">编辑</span>
+                                        <a href="{% url "product_del" %}?id={{ product.id }}" onclick="return confirm('确认删除产品线吗？')"><span class="btn btn-sm btn-danger ">删除</span></a>
+                                    </td>
+                                    -->
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                  </table>
+                  <div class="btn-group">
+                      <input type="button" id="product_detail_del" class="btn btn-danger"   name="del_button" value="删除详情信息"/>
+                  </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
+</div>
+<script>
+  $(function () {
+    $('#productform').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": true,
+      "info": true,
+      "serverSide": false,
+      "autoWidth": true
+    });
+  });
+</script>
+
+<script>
+    $('#product_detail_del').click(function () {
+        var product_id_all = getIDall();
+        if (product_id_all == ''){
+            alert("请至少选择一行!");
+            return false;
+        }
+        if (confirm("确定删除?")) {
+            $.ajax({
+                type: "post",
+                data: {product_id_all: product_id_all,csrfmiddlewaretoken: '{{ csrf_token }}'},
+                url: "{% url 'product_detail_del' %}",
+                success: function () {
+                    window.location.reload();
+                }
+            });
+        }
+    });
+</script>
+
+<script>
+$("#success-alert").fadeTo(3000, 1000).slideUp(1000, function(){
+    $("#success-alert").slideUp(1000);
+});
+</script>
+
+<script>
+function popWin(product_name){
+  layer.open({
+      type: 2,
+      title: '项目列表',
+      area: ['700px', '500px'],
+      shadeClose: true, //点击遮罩关闭
+      content: ['/appconf/product/product_detail/' + product_name]
+  });
+}
+</script>
+{% endblock %}

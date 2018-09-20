@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'monitor',
     'appconf',
     'delivery',
+    'rest_framework',
     'django_celery_results',
     'django_celery_beat',
     'django.contrib.admin',
@@ -196,9 +197,9 @@ REST_FRAMEWORK = {
 }
 '''
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    #'DEFAULT_PERMISSION_CLASSES': (
+    #    'rest_framework.permissions.IsAuthenticated',
+    #),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     )

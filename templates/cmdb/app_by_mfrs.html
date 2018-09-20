@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block self_head_css_js %}
+    <script src="/static/layer/layer.js"></script>
+    <script src="/static/js/base.js"></script>
+    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="/static/plugins/datatables/dataTables.bootstrap.css"></script>
+
+{% endblock %}
+{% block content %}
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+    </section>
+    <section class="content">
+        <div class="box">
+                <div class="box-body">
+                  <table class="table table-striped table-bordered" id="product_project_table">
+                      <thead>
+                        <tr>
+                            <th>部署应用名称</th>
+                            <th>部署应用IP</th>
+                            <th>部署应用端口</th>
+                            <th>部署应用环境</th>
+                            <th>部署应用方式</th>
+                        </tr>
+                      </thead>
+                            <tbody>
+                            {% for details in app_details %}
+                                <tr class="even gradeX">
+                                    <td>{{ details.app_name }}</a></td>
+                                    <td>{{ details.ip_address }} </td>
+                                    <td>{{ details.app_port }} </td>
+                                    <td>{{ details.env }} </td>
+                                    <td>{{ details.deploy_method }} </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                  </table>
+                </div>
+        </div>
+    </section>
+</div>
+<script>
+  $(function () {
+    $('#product_project_table').DataTable({
+      "paging": true,
+      "lengthChange": true,
+      "searching": true,
+      "ordering": false,
+      "info": true,
+      "autoWidth": true
+    });
+  });
+</script>
+</body>
+{% endblock %}
+

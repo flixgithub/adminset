@@ -10,6 +10,11 @@ from lib.deploy_key import deploy_key
 import logging
 from lib.log import log
 from config.views import get_dir
+from rest_framework import serializers
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+import io
 
 
 try:
@@ -199,3 +204,30 @@ def get_group(request):
             d.append(ret_hg)
             return HttpResponse(json.dumps(d))
     return HttpResponse(status=403)
+
+
+@api_view(['GET', 'POST'])
+def get_product_user(request):
+    if request.method == 'GET':
+        try:
+            search_name = request.GET['name']
+        except Exception as msg:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        all_product = {}
+        with io.open("/var/opt/adminset/main/cmdb/proj2user.json") as f:
+            product = json.load(f)
+            product_details = product['data']
+            for detail in product_details:
+                if detail['deployNameEN'] == search_name:
+                    all_product['nameEN'] = detail['deployNameEN']
+                    all_product['nameCN'] = detail['businessNameCN']
+                    all_product['ownerName'] = detail['deployOwnerName']
+                    all_product['ownerMobile'] = detail['deployOwnerMobile']
+                    all_product['ownerEmail'] = detail['deployOwnerEmail']
+                    all_product['leaderName'] = detail['businessLeaderName']
+                    all_product['leaderMobile'] = detail['businessLeaderMobile']
+                    all_product['leaderEmail'] = detail['businessLeaderEmail']
+                    all_product['alarm_level'] = detail['grade']
+            if not all_product:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(data=all_product,content_type='application/json; charset=utf-8', status=status.HTTP_200_OK)

@@ -3,7 +3,7 @@
 
 from django import forms
 from django.forms.widgets import *
-from .models import Product, Project, AppOwner, AuthInfo
+from .models import Product, Project, AppOwner, AuthInfo, Product_Detail
 
 
 class AuthInfoForm(forms.ModelForm):
@@ -42,6 +42,27 @@ class ProductForm(forms.ModelForm):
             'name': TextInput(attrs={'class': 'form-control','style': 'width:450px;'}),
             'description': Textarea(attrs={'class': 'form-control','style': 'width:450px; height:100px'}),
             'owner': Select(attrs={'class': 'form-control','style': 'width:450px;'}),
+        }
+
+
+class Product_Detail_Form(forms.ModelForm):
+
+    class Meta:
+        model = Product_Detail
+        exclude = ("id",)
+        widgets = {
+            'app_name': TextInput(attrs={'class': 'form-control', 'style': 'width:450px;'}),
+            'ip_address': TextInput(attrs={'class': 'form-control', 'style': 'width:450px;'}),
+            'app_port': TextInput(attrs={'class': 'form-control', 'style': 'width:450px;'}),
+            'env': Select(choices=(('cloud_dev','cloud_dev'),('cloud_qa','cloud_qa'),('cloud_pp','cloud_pp'),('cloud_prd','cloud_prd'),
+                                   ('psa_dev','psa_dev'),('psa_qa','psa_qa'), ('psa_pp','psa_pp'), ('psa_prd','psa_prd'),
+                                   ('fd_dev','fd_dev'), ('fd_qa','fd_qa'), ('fd_pp','fd_pp'), ('fd_prd','fd_prd'),
+                                   ('gz_dev','gz_dev'), ('gz_qa','gz_qa'), ('gz_pp','gz_pp'), ('gz_prd','gz_prd'),
+                                   ('wl_dev','wl_dev'), ('wl_qa','wl_qa'), ('wl_pp','wl_pp'), ('wl_prd','wl_prd'),
+                                   ),
+                          attrs={'class': 'form-control', 'style': 'width:450px;'}),
+            'deploy_method': Select(choices=(('war','war'),('jar','jar'),('container','container'),('shell','shell'),('na','n/a')),
+                                    attrs={'class': 'form-control', 'style': 'width:450px;'}),
         }
 
 

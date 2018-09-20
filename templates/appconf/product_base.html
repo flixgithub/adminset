@@ -30,6 +30,8 @@
         <div class="box-body">
         {% if product_id %}
             <form action="{% url 'product_edit' product_id %}" method="post">
+        {% elif product_detail %}
+            <form action="{% url 'product_detail_add' %}" method="post">
         {% else %}
             <form action="{% url 'product_add' %}" method="post">
         {% endif %}

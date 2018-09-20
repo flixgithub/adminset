@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 from django.conf.urls import url, include
-from cmdb import api, idc, asset, group, cabinet
+from cmdb import api, idc, asset, group, cabinet, app_by_mfrs
 
 
 urlpatterns = [
@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^asset/edit/(?P<ids>\d+)/$', asset.asset_edit, name='asset_edit'),
     url(r'^asset/detail/(?P<ids>\d+)/$', asset.server_detail, name='server_detail'),
     # url(r'^asset/save/$', asset.asset_save, name='asset_save'),
+    url(r'^asset/app_by_mfrs/$', app_by_mfrs.get_info_by_mfrs, name='app_by_mfrs'),
     url(r'^group/$', group.group, name='group'),
     url(r'^group/del/$', group.group_del, name='group_del'),
     url(r'^group/add/$', group.group_add, name='group_add'),
@@ -30,4 +31,5 @@ urlpatterns = [
     url(r'^collect', api.collect, name='update_api'),
     url(r'^get/host/', api.get_host, name='get_host'),
     url(r'^get/group/', api.get_group, name='get_group'),
+    url(r'^api/get_product_user', api.get_product_user, name='get_product_user'),
 ]
