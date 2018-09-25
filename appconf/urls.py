@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^product/project_list/(?P<product_id>\d+)/$', product.project_list, name='product_project_list'),
     url(r'^product/edit/(?P<product_id>\d+)/$', product.product_edit, name='product_edit'),
     url(r'^product/delete/$', product.product_del, name='product_del'),
+    url(r'^product/detail_delete/$', product.product_detail_del, name='product_detail_del'),
     url(r'^project/add/$', project.project_add, name='project_add'),
     url(r'^project/list/$', project.project_list, name='project_list'),
     url(r'^project/edit/(?P<project_id>\d+)/$', project.project_edit, name='project_edit'),

@@ -2,15 +2,26 @@
 {% block self_head_css_js %}
     <script src="/static/layer/layer.js"></script>
     <script src="/static/js/base.js"></script>
-    <script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="/static/plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <script src="/static/plugins/datatables/dataTables.bootstrap.css"></script>
+	<link rel="stylesheet" type="text/css" href="/static/plugins/datatables/jquery.dataTables.min.css"></script>
+	<link rel="stylesheet" type="text/css" href="/static/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css"></script>
+	<script src="/static/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/static/plugins/datatables/extensions/Buttons/js/dataTables.buttons.min.js"></script>
+    <script src="/static/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js"></script>
+	<script src="/static/plugins/datatables/jszip.min.js"></script>
+    <script src="/static/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js"></script>
+    <script src="/static/plugins/datatables/extensions/Buttons/js/buttons.print.js"></script>
+
 
 {% endblock %}
 {% block content %}
 <body>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
+    <style type="text/css">
+    .dataTables_filter {
+      float: right
+     }
+   </style>
     <section class="content-header">
     </section>
     <section class="content">
@@ -43,16 +54,14 @@
     </section>
 </div>
 <script>
-  $(function () {
-    $('#product_project_table').DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": false,
-      "info": true,
-      "autoWidth": true
-    });
-  });
+    $(document).ready(function() {
+        $('#product_project_table').DataTable( {
+        dom: 'lfrtBip',
+        buttons: [
+            'copy', 'csv', 'excel'
+        ]
+    } );
+} );
 </script>
 </body>
 {% endblock %}

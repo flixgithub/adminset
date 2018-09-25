@@ -25,3 +25,9 @@ def get_info_by_mfrs(request):
         'app_details': app_details,
     }
     return render(request, 'cmdb/app_by_mfrs.html', results)
+
+
+@login_required()
+@permission_verify()
+def export_info(request):
+    pass

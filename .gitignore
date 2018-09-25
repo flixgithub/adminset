@@ -1,2 +1,4 @@
 .svn/
 .idea
+.appconf/__pycache__/
+.cmdb/__pycache__/
