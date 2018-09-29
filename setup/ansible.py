@@ -86,7 +86,8 @@ def playbook(request):
                     cmd = "ansible-playbook"+" " + ansible_dir+'/gexec.yml'
                     p = Popen(cmd, stderr=PIPE, stdout=PIPE, shell=True)
                     data = p.communicate()
-                    ret.append(data)
+                    cmd_result = data[0].decode('utf-8')  # data[0] means stdout data[1] means stderr
+                    ret.append(cmd_result)
                     for d in data:
                         logging.info(d)
                     logging.info("==========ansible tasks end============")
@@ -102,7 +103,8 @@ def playbook(request):
                         cmd = "ansible-playbook"+" " + playbook_dir + p
                         pcmd = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
                         data = pcmd.communicate()
-                        ret.append(data)
+                        cmd_result = data[0].decode('utf-8')  # data[0] means stdout data[1] means stderr
+                        ret.append(cmd_result)
                         logging.info("==========ansible tasks start==========")
                         logging.info("User:"+request.user.username)
                         logging.info("host:"+h)
@@ -131,7 +133,8 @@ def playbook(request):
                     cmd = "ansible-playbook"+" " + ansible_dir+'/gexec.yml'
                     p = Popen(cmd, stderr=PIPE, stdout=PIPE, shell=True)
                     data = p.communicate()
-                    ret.append(data)
+                    cmd_result = data[0].decode('utf-8')  # data[0] means stdout data[1] means stderr
+                    ret.append(cmd_result)
                     for d in data:
                         logging.info(d)
                     logging.info("==========ansible tasks end============")
@@ -147,7 +150,8 @@ def playbook(request):
                         cmd = "ansible-playbook"+" " + playbook_dir + p
                         pcmd = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
                         data = pcmd.communicate()
-                        ret.append(data)
+                        cmd_result = data[0].decode('utf-8')  # data[0] means stdout data[1] means stderr
+                        ret.append(cmd_result)
                         logging.info("==========ansible tasks start==========")
                         logging.info("User:"+request.user.username)
                         logging.info("Group:"+g)
@@ -172,7 +176,8 @@ def ansible_command(request):
             if command.startswith("ansible"):
                 p = Popen(command, stdout=PIPE, stderr=PIPE,shell=True)
                 data = p.communicate()
-                ret.append(data)
+                cmd_result = data[0].decode('utf-8')  # data[0] means stdout data[1] means stderr
+                ret.append(cmd_result)
             else:
                 data = "your command " + str(count) + "  is invalid!"
                 ret.append(data)

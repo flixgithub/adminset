@@ -57,9 +57,18 @@
     $(document).ready(function() {
         $('#product_project_table').DataTable( {
         dom: 'lfrtBip',
-        buttons: [
-            'copy', 'csv', 'excel'
-        ]
+        buttons: [{
+          extend: 'csv',
+          title: 'cmdb CSV export',
+          filename: 'cmdb_CSV'
+        }, {
+          extend: 'excel',
+          title: 'cmdb EXCEL export',
+          filename: 'cmdb_EXCEL'
+        }, {
+          extend: 'copy'
+        }
+       ]
     } );
 } );
 </script>
