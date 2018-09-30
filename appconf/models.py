@@ -48,7 +48,7 @@ class Product_Detail(models.Model):
     deploy_method = models.CharField(max_length=50, null=True, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return self.app_name
 
 
 class Project(models.Model):

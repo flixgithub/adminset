@@ -15,14 +15,15 @@ import json
 @login_required()
 @permission_verify()
 def get_info_by_mfrs(request):
+    app_details = None
     if request.method == 'GET':
         mfrs_name = request.GET.get('mfrs')  # get manufacture name
         if not mfrs_name:
             mfrs_name = 'cloud'
-        app_datails = cache.get('app_details')
-        if app_datails is None:
+        app_details = cache.get(mfrs_name)
+        if app_details is None:
             app_details = Product_Detail.objects.filter(Q(env__startswith=mfrs_name))
-            cache.set('app_details', app_details, 60*60)
+            cache.set(mfrs_name, app_details, 60 * 60)
     temp_name = "cmdb/app_by_mfrs-header.html"
     results ={
         'temp_name': temp_name,
