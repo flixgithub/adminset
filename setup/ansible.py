@@ -41,6 +41,12 @@ def write_role_vars(roles, vargs):
     return True
 
 
+def reset_role_vars(roles, vargs):
+    for r in roles:
+        if os.path.exists(roles_dir + r + "/vars/main.yml"):
+            os.remove(roles_dir + r + "/vars/main.yml")
+
+
 @login_required()
 @permission_verify()
 def index(request):
@@ -72,12 +78,14 @@ def playbook(request):
             if roles:
                 if role_vars:
                     write_role_vars(roles, role_vars)
+                else:
+                    reset_role_vars(roles, role_vars)
                 for h in host:
                     logging.info("==========ansible tasks start==========")
                     logging.info("User:"+request.user.username)
                     logging.info("host:"+h)
                     with open(ansible_dir + '/gexec.yml', 'w+') as f:
-                        flist = ['- hosts: '+h+'\n', '  remote_user: root\n', '  gather_facts: true\n', '  roles:\n']
+                        flist = ['- hosts: '+h+'\n', '  remote_user: admin\n', '  gather_facts: true\n', '  roles:\n']
                         for r in roles:
                             rs = '    - ' + r + '\n'
                             flist.append(rs)
@@ -118,12 +126,14 @@ def playbook(request):
             if roles:
                 if role_vars:
                     write_role_vars(roles, role_vars)
+                else:
+                    reset_role_vars(roles, role_vars)
                 for g in group:
                     logging.info("==========ansible tasks start==========")
                     logging.info("User:"+request.user.username)
                     logging.info("group:"+g)
                     f = open(ansible_dir + '/gexec.yml', 'w+')
-                    flist = ['- hosts: '+g+'\n', '  remote_user: root\n', '  gather_facts: true\n', '  roles:\n']
+                    flist = ['- hosts: '+g+'\n', '  remote_user: admin\n', '  gather_facts: true\n', '  roles:\n']
                     for r in roles:
                         rs = '    - ' + r + '\n'
                         flist.append(rs)
