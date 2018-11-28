@@ -42,6 +42,38 @@
 						 <a href="{% url 'delivery_add' %}"><li class="btn btn-success" ><b>添加项目</b></li></a>
                   </div>
                 </div>
+            <div class="col-md-5">
+
+                <label for="page_len">
+                    <select name="page_len" id="page_len" class="form-control m-b input-sm" onchange="change_info()">
+                        {% ifequal page_len '10' %}
+                            <option value="10" selected>10</option>
+                        {% else %}
+                            <option value="10">10</option>
+                        {% endifequal %}
+                        {% ifequal page_len '20' %}
+                            <option value="20" selected>20</option>
+                        {% else %}
+                            <option value="20">20</option>
+                        {% endifequal %}
+                        {% ifequal page_len '50' %}
+                            <option value="50" selected>50</option>
+                        {% else %}
+                            <option value="50">50</option>
+                        {% endifequal %}
+                        {% ifequal page_len '100' %}
+                            <option value="100" selected>100</option>
+                        {% else %}
+                            <option value="100">100</option>
+                        {% endifequal %}
+                        {% ifequal page_len '200' %}
+                            <option value="200" selected>200</option>
+                        {% else %}
+                            <option value="200">200</option>
+                        {% endifequal %}
+                    </select>
+                            </label>
+            </div>
 
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -82,7 +114,8 @@
                                     <td>
                                         <a href="#"><li onclick="return deploy(this.value);" class="btn btn-sm btn-default" value="{{ project.job_name_id }}">部署</li></a>
                                         <a href="#"><li style="list-style-type:none" class="btn btn-sm btn-default" onclick="return tanchu(this.value)" value="{{ project.job_name_id  }}">日志</li></a>
-                                        <a href="{% url "delivery_edit" project.id %}"><span class="btn btn-sm btn-default">编辑</span></a>
+                                        <a href="#"><li style="list-style-type:none" class="btn btn-sm btn-default" onclick="return logs_history(this.value)" value="{{ project.job_name_id  }}">历史</li></a>
+                                        <a href="#"><li onclick="return tanchu_edit(this.value) " value="{{ project.job_name_id  }}" class="btn btn-sm btn-default">编辑</li></a>
                                         <a href="#"><li onclick="return taskstop(this.value);" class="btn btn-sm btn-default" value="{{ project.job_name_id }}">清理</li></a>
                                         <a href="{% url "delivery_del"%}?project_id={{ project.id }}" onclick="return confirm('确认删除项目吗？')"><span class="btn btn-sm btn-danger ">删除</span></a>
                                     </td>
@@ -146,8 +179,44 @@ function tanchu(n){
     content: ['/delivery/log/' + n]
   });
 }
+function logs_history(n){
+    layer.open({
+    type: 2,
+    title: 'Logs View',
+    closeBtn: 1,
+    area: ['600px', '400px'],
+    shadeClose: true, //点击遮罩关闭
+    content: ['/delivery/logs/history/' + n]
+  });
+}
 </script>
-
+{#用于接收asset_edit.html中layui子层的传值#}
+<input id="handle_status" value="" hidden="hidden">
+<script>
+function tanchu_edit(n){
+  layer.open({
+  type: 2,
+  title: '信息修改',
+  area: ['600px', '450px'],
+  shadeClose: true, //点击遮罩关闭
+  content: ['/delivery/edit/' + n],
+  end:function(){
+        var handle_status = $("#handle_status").val();
+        if ( handle_status == '1' ) {
+            layer.msg('保存成功！',{
+                icon: 1,
+                time: 2000 //2秒关闭（如果不配置，默认是3秒）
+            });
+        } else if ( handle_status == '2' ) {
+            layer.msg('修改失败！',{
+                icon: 2,
+                time: 2000 //2秒关闭（如果不配置，默认是3秒）
+            });
+        }
+    }
+  });
+}
+</script>
 <script>
 function deploy(args) {
     if (confirm("确定部署？")) {
@@ -167,7 +236,7 @@ function taskstop(args) {
 }
 </script>
 <script>
-    var v1 = window.setInterval("status()",3000);
+    var v1 = window.setInterval("status()",6000);
 
     function status() {
         {% for project in all_project %}
@@ -180,5 +249,10 @@ function taskstop(args) {
         {% endfor %}
     }
 </script>
-
+<script>
+    function change_info(){
+        var args = $("#project_form").serialize();
+        window.location = "{% url 'delivery' %}?" + args
+    }
+</script>
 {% endblock %}

@@ -26,8 +26,11 @@ cd $cur_dir/vendor/WebSSH2
 cd $adminset_dir
 if [ $1 ]
 then
-    python manage.py makemigrations $1
-    python manage.py migrate
+    python manage.py makemigrations
+    for app in $*
+    do
+        python manage.py migrate $app
+    done
 else
     python manage.py makemigrations
     python manage.py migrate
@@ -46,5 +49,6 @@ echo "##############install finished###################"
 systemctl daemon-reload
 nginx -s reload
 service adminset restart
+service celery restart
 echo "you have updated adminset successfully!!!"
 echo "################################################"

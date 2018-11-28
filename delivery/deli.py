@@ -8,7 +8,7 @@ from delivery.models import Delivery
 from delivery.forms import DeliveryFrom
 from accounts.permission import permission_verify
 from delivery.tasks import deploy
-import os
+import os, re
 from time import sleep
 import json
 import time
@@ -21,6 +21,7 @@ def delivery_list(request):
     all_project = []
     temp_name = "delivery/delivery-header.html"
     all_project = Delivery.objects.all()
+    page_len = request.GET.get('page_len', '')
     deploys_list, p, deploys, page_range, current_page, show_first, show_end, end_page = pages(all_project, request)
     return render(request, 'delivery/delivery_list.html', locals())
 
@@ -63,13 +64,15 @@ def delivery_add(request):
 @login_required
 @permission_verify()
 def delivery_edit(request, project_id):
-    project = Delivery.objects.get(id=project_id)
+    project = Delivery.objects.get(job_name_id=project_id)
     temp_name = "delivery/delivery-header.html"
     if request.method == 'POST':
         form = DeliveryFrom(request.POST, instance=project)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect(reverse('delivery_list'))
+            status = 1
+        else:
+            status = 2
     else:
         form = DeliveryFrom(instance=project)
 
@@ -79,7 +82,7 @@ def delivery_edit(request, project_id):
         'request': request,
         'temp_name': temp_name,
     }
-    return render(request, 'delivery/delivery_base.html', results)
+    return render(request, 'delivery/delivery_edit.html', locals())
 
 
 @login_required
@@ -91,8 +94,12 @@ def delivery_deploy(request, project_id):
     job_name = project.job_name.name
     source_address = project.job_name.source_address
     app_path = project.job_name.appPath
+    source_auth = project.source_auth
     if project.auth:
-        auth_info = {"username": project.auth.username, "password": project.auth.password}
+        auth_info = {"username": project.auth.username,
+                     "password": project.auth.password,
+                     "deploy_port": project.auth.deploy_port,
+                     }
     else:
         auth_info = None
     project.status = True
@@ -109,7 +116,8 @@ def delivery_deploy(request, project_id):
         server_ip = str(server.ip)
         server_list.append(server_ip)
     project.bar_data = 15
-    deploy.delay(job_name, server_list, app_path, source_address, project_id, auth_info)
+    rsync_status = project.rsync_delete
+    deploy.delay(job_name, server_list, app_path, source_address, project_id, auth_info, rsync_status, source_auth)
     return HttpResponse("ok")
 
 
@@ -158,3 +166,61 @@ def task_stop(request, project_id):
     project.status = False
     project.save()
     return HttpResponse("task stop ok")
+
+
+@login_required()
+@permission_verify()
+def logs_history(request, project_id):
+    project = Delivery.objects.get(job_name_id=project_id)
+    job_name = project.job_name.name
+    log_path = "/var/opt/adminset/workspace/{0}/logs".format(job_name)
+    for logs in os.walk(log_path):
+        logs_history = logs[2]
+    return render(request, "delivery/logs_history.html", locals())
+
+
+@login_required()
+@permission_verify()
+def get_log(request, project_id, logname):
+    ret = []
+    project = Delivery.objects.get(job_name_id=project_id)
+    job_name = project.job_name.name
+    log_path = "/var/opt/adminset/workspace/{0}/logs/".format(job_name)
+    # log_path = "/var/opt/adminset/workspace/{0}/logs/".format(job_name)
+    log_file = log_path + logname
+    with open(log_file, 'r+') as f:
+        line = f.readlines()
+        for l in line:
+            l += "<br>"
+            ret.append(l)
+    return HttpResponse(ret)
+
+
+@login_required()
+@permission_verify()
+def log_del(request):
+    project_id = request.GET.get('project_id', '')
+    logname = request.GET.get('logname', '')
+    project = Delivery.objects.get(job_name_id=project_id)
+    job_name = project.job_name.name
+    log_path = "/var/opt/adminset/workspace/{0}/logs/".format(job_name)
+    log_file = log_path + logname
+    if project_id and logname:
+        os.remove(log_file)
+
+    return HttpResponse("ok")
+
+
+@login_required()
+@permission_verify()
+def log_delall(request):
+    project_id = request.GET.get('project_id', '')
+    project = Delivery.objects.get(job_name_id=project_id)
+    job_name = project.job_name.name
+    log_path = "/var/opt/adminset/workspace/{0}/logs/".format(job_name)
+    for l_file in os.walk(log_path):
+        for l in l_file[2]:
+            del_file = log_path + l
+            os.remove(del_file)
+
+    return HttpResponse("ok")

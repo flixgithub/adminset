@@ -110,8 +110,7 @@
             4）配置文件路径功能暂时没有实装，留空白，或加上只相当于注释作用。
             5）所在服务器，部署的目标服务器，将会被持续交付模块的部署动作调用。
          1.3 认证管理
-            此条目中保存所有系统中调用外部资源使用的用户权限信息，如下载私有gitlab repository的用户名
-            与密码，此条目被持续交付中的部署任务所关联。如果部署任务需要外部权限则创建，然后调用。  
+            此条目与持续交付模块中的条目里的“认证信息”有关，如果在创建条目则会显示在持续交付模块的认证信息中。
             
 #   启用webssh
     需要设置域名解析，默认域名为adminset.cn（可以在配置管理页面进行变更）
@@ -171,10 +170,14 @@
        源服务器为svn时 写入svn的tag或分支路径如： tags/v1.0 或 branches/br_dev01
     3）构建清理，勾选后将清除前一次拉取的代码，如果想增量下量代码时请不要勾选此项，不勾选此项将会使用git pull拉取运程代码。
     4）shell,代码发布后执行的shell，默认会在远程部署目标服务器上依次执行。
+    5）同步删除，默认为TRUE，使用rsync的 --delete参数。
     5）本地执行，勾选后shell中的代码将在adminset所有服务器本地执行。
-    6）认证信息，如果下载代码需要用户名密码等信息，在这些选择，此处调用应用管理中的认证管理。
+    6）认证信息：
+       a)如果下载使用的是git的http模式或SVN需要用户名密码等信息，在下拉中选择相应的用户名密码，注意一定要勾选“源码认证”，否则将会改变部署本身的用户名密码。
+       b)如果你的被部署机器使用了非root和非ssh 22端口部署，在不勾选“源码认证”的情况下选择相应的认证信息。
     7）清理按钮不会终止部署任务，只会清理部署的状态，用于部署任务意外中止后任务卡进度条的情况。
-    
+    8）在程序源码的根目录放入exclude.txt文件之后，部署程序将排除其声明的目录或文件，书写格式参考rsync --exclude-from 文件写法。
+  
 #   监控平台用法
     当adminset_agent.py自动上报信息，监控会自动发现并配置，无需干预.
     当监控页面打开时，前端JS每10秒会异步抓取监控数据
@@ -201,6 +204,7 @@
     monitor 监控平台 
     accounts 用户管理 
     config 配置管理
+    mfile 文件管理
 
 
 #   LDAP认证
@@ -217,6 +221,10 @@
     9、nickname 必选信息，用户名，例：cn
     10、is_active 可选信息，自动激活ldap某个组的账号，如果不写此信息ldap用户默认在adminset中为禁用状态，此组需要在LDAP服务器中创建，objectClass类型必须为posixGroup
     11、is_superuser 可选信息，自动激活ldap中某个组的账号为超管，此组需要在LDAP服务器中创建，objectClass类型必须为posixGroup
+
+#   文件管理
+    可以通过WEB直接对adminset 服务端的脚本文件进行管理。
+    这些文件可以直接被任务编排模块直接调用。
     
 #   组件启动管理
     service adminset {start|stop|restart} # gunicorn管理程序
@@ -243,7 +251,7 @@
     3)二次开发
         rsync.sh脚本只做增量，rsync参数不带--delete选项，不会在生产环境删除代码中已删除的条目,不更新组件配置文件，不会生成新的ORM数据库条目。
         update.sh脚本带--delete选项，同步代码，重新发布各组件的配置文件，并重新生成ORM数据文件（makemigrations migrate）。
-        update.sh 可带一个参数，参数为需要更新的应用名，如变更了appconf模块的models只更新appconf可以使用update.sh appconf来更新。
+        update.sh 可带一个参数，参数为需要更新的应用名，如变更了appconf模块的models只更新appconf可以使用update.sh appconf来更新,如果变更了两个模块直接写两个模块名即可./update.sh cmdb appconf。
         注意：如果做表结构变更，把新生成的{app_name}/migrations中的000X_initial.py文件提交到代码中，以保证更新时ORM配置正确。 
     4) 自动化部署
         在自动化部署软件如jenkins或adminset中，拉取代码到本地后，再用命令将其复制到更新目标机器的/opt/adminset 目录，然后执行：
