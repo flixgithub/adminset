@@ -14,10 +14,8 @@ pymongo==3.3.0
 requests==2.20.0
 django-db==0.0.7
 ldap3==2.5.1
-<<<<<<< HEAD
 djangorestframework==3.8.2
 django-redis==4.9.0
-=======
 #elfinder requirements
 enum34==1.1.6
 ipaddress==1.0.18
@@ -36,4 +34,3 @@ PyNaCl==1.2.0
 python-magic==0.4.3
 pytz==2017.3
 six==1.11.0
->>>>>>> 6aa3e0c3f6c3311552fbbd9cef8896108b4d6560
