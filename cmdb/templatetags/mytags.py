@@ -26,6 +26,10 @@ def res_split(value):
                 data = v.replace('\n', '<br>')
                 res.append(data)
         return res
+    elif value is not None:
+        data = value.replace('\n', '<br>')
+        res.append(data)
+        return res
     else:
         return value
 
