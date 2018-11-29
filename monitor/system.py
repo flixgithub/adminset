@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 from django.shortcuts import render, HttpResponse
-from cmdb.models import Host, Idc, HostGroup
+from cmdb.models import Host, Idc, HostGroup, Rds, RdsGroup
 from appconf.product import Product
 from django.contrib.auth.decorators import login_required
 from accounts.permission import permission_verify
@@ -196,3 +196,34 @@ def product_tree():
 def tree_node(request):
     all_node = host_tree() + group_tree() + product_tree()
     return HttpResponse(json.dumps(all_node))
+
+
+@login_required()
+@permission_verify()
+def rds_index(request):
+    temp_name = "monitor/monitor-header.html"
+    #all_host = Host.objects.all()
+    #idcs = Idc.objects.all()
+    return render(request, "monitor/rds_index.html", locals())
+
+
+def rds_group_tree():
+    rds_group_node = []
+    for rds_group in RdsGroup.objects.all():
+        rds_list = []
+        # get all rds nodes by foreign_key in the rds group
+        all_rds = rds_group.rds_set.all()
+        for rds in all_rds:
+            rds_data = {'name': rds.db_instance_description, 'url': "/monitor/db/{}/0/".format(rds.db_instance_id), 'target':"myrdsframe"}
+            rds_list.append(rds_data)
+        group_data = {'name': rds_group.name, "open": False, 'children': rds_list}
+        rds_group_node.append(group_data)
+        del rds_list
+    return rds_group_node
+
+
+@login_required
+@csrf_exempt
+def rds_tree_node(request):
+    all_rds_node = rds_group_tree()
+    return HttpResponse(json.dumps(all_rds_node))

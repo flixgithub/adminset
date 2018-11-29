@@ -123,3 +123,27 @@ class InterFace(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class RdsGroup(models.Model):
+    name = models.CharField(u"RDS组名", max_length=30, unique=True)
+    desc = models.CharField(u"描述", max_length=100, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Rds(models.Model):
+    db_instance_id = models.CharField(max_length=100, null=False, blank=False)
+    db_instance_description = models.CharField(max_length=30, blank=False)
+    db_instance_type = models.CharField(max_length=30, blank=True)
+    db_instance_class = models.CharField(max_length=30, blank=True)
+    zone_id = models.CharField(max_length=30, blank=True)
+    connection_mode = models.CharField(max_length=30, blank=True)
+    engine = models.CharField(max_length=30, blank=True)
+    engine_version = models.CharField(max_length=10, blank=True)
+    rds_group = models.ForeignKey(RdsGroup, verbose_name=u"所在RDS组", on_delete=models.CASCADE, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.db_instance_description
+

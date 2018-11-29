@@ -1,0 +1,49 @@
+<head>
+{% include 'head_script.html' %}
+{% include 'link_css.html' %}
+</head>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <!-- Main content -->
+    <section class="content" style="position:relative;">
+      <div class="box-info">
+        <div class="box-header with-border">
+          <h5 class="box-title">rds_id : {{ db_instance_id }}</li></h5>
+        </div>
+        <div>
+        <div class="btn-group btn-group-lg">
+             <a href="{% url 'slow_sql' db_instance_id 0 %}"><span class="btn btn-default .btn-flat">一小时</span></a>
+        </div>
+        <div class="btn-group btn-group-lg">
+             <a href="{% url 'slow_sql' db_instance_id 1 %}"><span class="btn btn-default .btn-flat">三小时</span></a>
+        </div>
+        <div class="btn-group btn-group-lg">
+             <a href="{% url 'slow_sql' db_instance_id 2 %}"><span class="btn btn-default .btn-flat">五小时</span></a>
+        </div>
+        <div class="btn-group btn-group-lg">
+             <a href="{% url 'slow_sql' db_instance_id 3 %}"><span class="btn btn-default .btn-flat">一天</span></a>
+        </div>
+        <div class="btn-group btn-group-lg">
+             <a href="{% url 'slow_sql' db_instance_id 4 %}"><span class="btn btn-default .btn-flat">三天</span></a>
+        </div>
+        <div class="btn-group btn-group-lg">
+             <a href="{% url 'slow_sql' db_instance_id 5 %}"><span class="btn btn-default .btn-flat">一周</span></a>
+        </div>
+        <div id="slow_sql">
+         {% for slow_sql_dict in slow_sql_list %}
+          <ul style="border: solid 1px">
+          {% for key,value in slow_sql_dict.items %}
+           <li>{{ key|safe }} : {{ value|safe }}</li>
+          {% endfor %}
+          </ul>
+         {% endfor %}
+      </div>
+   </div>
+</div>
+<script type="text/javascript">
+var timing={{ timing }};  //通过URL传递元组数值调用7天数据
+</script>
+</section>
+        <!-- /.content -->
+</div>
+
