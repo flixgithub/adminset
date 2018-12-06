@@ -85,7 +85,7 @@ def playbook(request):
                     logging.info("User:"+request.user.username)
                     logging.info("host:"+h)
                     with open(ansible_dir + '/gexec.yml', 'w+') as f:
-                        flist = ['- hosts: '+h+'\n', '  remote_user: admin\n', '  gather_facts: true\n', '  roles:\n']
+                        flist = ['- hosts: '+h+'\n', '  remote_user: root\n', '  gather_facts: true\n', '  roles:\n']
                         for r in roles:
                             rs = '    - ' + r + '\n'
                             flist.append(rs)
@@ -133,7 +133,7 @@ def playbook(request):
                     logging.info("User:"+request.user.username)
                     logging.info("group:"+g)
                     f = open(ansible_dir + '/gexec.yml', 'w+')
-                    flist = ['- hosts: '+g+'\n', '  remote_user: admin\n', '  gather_facts: true\n', '  roles:\n']
+                    flist = ['- hosts: '+g+'\n', '  remote_user: root\n', '  gather_facts: true\n', '  roles:\n']
                     for r in roles:
                         rs = '    - ' + r + '\n'
                         flist.append(rs)
