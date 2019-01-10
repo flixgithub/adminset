@@ -67,7 +67,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'elfinder',
     'storages',
-    'mfile'
+    'mfile',
+    'branches',
 ]
 
 MIDDLEWARE_CLASSES = [

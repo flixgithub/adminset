@@ -5,22 +5,24 @@
 <br>
 Adminset基于DevOps理念开发，以整合全部运维场景为己任。Adminset是一个真正的基于运维思维而开发的全自动化运维平台。<br>
 
-## v0.30 新功能
-支持openldap和windowsAd的LDAP认证<br>
-支持更改LDAP账号密码变更<br>
-celery更新4.2.1<br>
-agent自动清理日志<br>
-python3.6.6语法兼容<br>
-脚本文件统一WEB管理<br>
-
+## v0.40 新功能
+全新Web SSH平台<br>
+分支机构IT资源管理<br>
+资产CSV导入导出<br>
+根据用户权限展示左边菜单栏<br>
+监控平台支持树状结构菜单<br>
+脚本统一管理平台<br>
+持续交付平台优化<br>
+django安全更新<br>
 
 ## 开发环境
-centos 7.2(1511) django 1.11.9 python 2.7<br>
+centos 7.2(1511) django 1.11.16 python 2.7<br>
 
 ## 服务端安装
 生产服务器建议 4核CPU，6G内存以上.<br>
 学习测试建议 2核CPU，2G内存以上.<br>
 服务器操作系统版本要求 centos7.2及以上<br>
+安装之前请关闭防火墙<br>
 ```
 git clone https://github.com/guohongze/adminset.git
 adminset/install/server/auto_install.sh
@@ -66,15 +68,15 @@ FAQ参考，<a href="https://github.com/guohongze/adminset/wiki/FAQ">常见问�
 每2小时重置一次数据<br>
 http://115.28.147.154<br>
 用户名admin 密码Adminset123<br>
-webssh用户名密码相同<br>
 
 # 安全
-建议不要将程序启动在有公网可以直接访问的设备上，如果需要请使用VPN。<br>
-建议生产环境中使用https配置服务器<br>
+强烈建议您不要将程序对公网开放<br>
+如果需要公网访问请使用VPN<br>
+建议生产环境中使用https配置服务器，并对命令执行、webssh等模块进行安全强化<br>
 由于开发方便，在django的settings中开启了DEBUG，在生产中需要关闭并指定自己的域名。
 
 # 开发者交流
 请加入开发者群<br>
-2号群 536962005<br>
+3号群 730232593<br>
 
 

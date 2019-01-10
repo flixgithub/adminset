@@ -4,9 +4,10 @@
 import csv
 import datetime
 import sys
+import os
 
 from accounts.permission import permission_verify
-from cmdb.api import get_object, pages, str2gb
+from cmdb.api import get_object, pages, str2gb, str2gb2utf8
 from config.views import get_dir
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -155,6 +156,73 @@ def create_asset_excel(export, asset_id_all):
 
 @login_required()
 @permission_verify()
+def asset_import(request):
+    temp_name = "cmdb/cmdb-header.html"
+    if request.method == "POST":
+        uf = request.FILES.get('asset_import')
+        with open("/var/opt/adminset/data/asset.csv", "wb+") as f:
+            for chunk in uf.chunks(chunk_size=1024):
+                f.write(chunk)
+        try:
+            filename = "/var/opt/adminset/data/asset.csv"
+            with open(filename, "rb") as f:
+                title = next(csv.reader(f))
+                for data in csv.reader(f):
+                    data0 = str2gb2utf8(data[0])
+                    if data0 == u"主机名":
+                        continue
+                    try:
+                        host = Host.objects.get(hostname=data0)
+                    except Exception as msg:
+                        host = Host()
+                        host.hostname = data0
+                    host.ip = data[1]
+                    host.other_ip = str2gb2utf8(data[2])
+                    if data[3]:
+                        try:
+                            idc_name = str2gb2utf8(data[3])
+                            print("idc name is : {}".format(idc_name))
+                            print("idc name type: {}".format(type(idc_name)))
+                            item = Idc.objects.get(name=idc_name)
+                            host.idc_id = item.id
+                        except Exception as e:
+                            print(e)
+                            print("idc info import error")
+                    host.asset_no = str2gb2utf8(data[4])
+                    if data[5]:
+                        asset_type = str2gb2utf8(data[5])
+                        for x, v in ASSET_TYPE:
+                            if v == asset_type:
+                                ret = x
+                        host.asset_type = ret
+                    if data[6]:
+                        status = str2gb2utf8(data[6])
+                        for x, v in ASSET_STATUS:
+                            if v == status:
+                                ret = x
+                        host.status = ret
+                    host.os = str2gb2utf8(data[7])
+                    host.vendor = str2gb2utf8(data[8])
+                    host.cpu_model = str2gb2utf8(data[9])
+                    host.cpu_num = str2gb2utf8(data[10])
+                    host.memory = str2gb2utf8(data[11])
+                    host.disk = (data[12])
+                    host.sn = str2gb2utf8(data[13])
+                    host.position = str2gb2utf8(data[14])
+                    host.memo = str2gb2utf8(data[15])
+                    host.save()
+            os.remove(filename)
+            status = 1
+        except Exception as e:
+            print(e)
+            print("import asset csv file error!")
+            status = 2
+
+    return render(request, 'cmdb/import.html', locals())
+
+
+@login_required()
+@permission_verify()
 def asset_add(request):
     temp_name = "cmdb/cmdb-header.html"
     if request.method == "POST":
@@ -221,3 +289,11 @@ def server_detail(request, ids):
     except Exception as e:
         print(e)
     return render(request, 'cmdb/server_detail.html', locals())
+
+
+@login_required()
+@permission_verify()
+def webssh(request, ids):
+    host = Host.objects.get(id=ids)
+    webssh_domain = get_dir("webssh_domain")
+    return render(request, 'cmdb/webssh.html', locals())
